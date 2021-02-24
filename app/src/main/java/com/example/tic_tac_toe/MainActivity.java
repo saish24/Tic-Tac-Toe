@@ -8,14 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView[][] grid = new TextView [3][3];
     private TextView tv_p1, tv_p2;
     private boolean P1turn = true;
     private int roundCount = 0, player1points, player2points;
-    private String green = "#64DD17", black = "#ffffff";
+    private String green = "#64DD17", white = "#ffffff";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 resetboard();
                 roundCount = 0;
                 tv_p2.setTextColor(Color.parseColor(green));
-                tv_p1.setTextColor(Color.parseColor(black));
+                tv_p1.setTextColor(Color.parseColor(white));
             }
         });
 
@@ -67,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(P1turn){
             tv_p2.setTextColor(Color.parseColor(green));
-            tv_p1.setTextColor(Color.parseColor(black));
+            tv_p1.setTextColor(Color.parseColor(white));
         } else {
             tv_p1.setTextColor(Color.parseColor(green));
-            tv_p2.setTextColor(Color.parseColor(black));
+            tv_p2.setTextColor(Color.parseColor(white));
         }
 
         P1turn = !P1turn;
