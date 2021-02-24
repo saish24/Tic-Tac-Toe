@@ -1,24 +1,22 @@
 package com.example.tic_tac_toe;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.concurrent.TimeUnit;
+import static android.graphics.Color.GREEN;
+import static android.graphics.Color.WHITE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final TextView[][] grid = new TextView [3][3];
     private TextView tv_p1, tv_p2;
     private boolean P1turn = true, resetOpt = false;
     private int roundCount = 0, player1points, player2points;
-    private final String green = "#64DD17", white = "#ffffff";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +36,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         TextView tv_reset = findViewById(R.id.tv_reset);
-        tv_reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetOpt = true;
-                resetboard();
-                player1points = 0;
-                player2points = 0;
-                updatePoints();
-                P1turn = true;
-                tv_p1.setTextColor(Color.parseColor(green));
-                tv_p2.setTextColor(Color.parseColor(white));
-            }
+        tv_reset.setOnClickListener(v -> {
+            resetOpt = true;
+            resetboard();
+            player1points = 0;
+            player2points = 0;
+            updatePoints();
+            P1turn = true;
+            tv_p1.setTextColor(GREEN);
+            tv_p2.setTextColor(WHITE);
         });
 
     }
@@ -66,11 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         ++roundCount;
         if(P1turn){
-            tv_p2.setTextColor(Color.parseColor(green));
-            tv_p1.setTextColor(Color.parseColor(white));
+            tv_p2.setTextColor(GREEN);
+            tv_p1.setTextColor(WHITE);
         } else {
-            tv_p1.setTextColor(Color.parseColor(green));
-            tv_p2.setTextColor(Color.parseColor(white));
+            tv_p1.setTextColor(GREEN);
+            tv_p2.setTextColor(WHITE);
         }
         P1turn = !P1turn;
         if(roundCount == 9) draw();
@@ -127,13 +122,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void resetboard() {
         if(!resetOpt){
             final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    for(int i=0; i<3; ++i){
-                        for(int j=0; j<3; ++j){
-                            grid[i][j].setText("");
-                        }
+            handler.postDelayed(() -> {
+                for(int i=0; i<3; ++i){
+                    for(int j=0; j<3; ++j){
+                        grid[i][j].setText("");
                     }
                 }
             }, 600);
