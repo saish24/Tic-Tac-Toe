@@ -23,6 +23,18 @@
             android:textSize="30sp" />
 
         <TextView
+            android:id="@+id/tv_p1_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_P1"
+            android:layout_toRightOf="@+id/tv_P1"
+            android:layout_marginLeft="16dp"
+            android:text="X"
+            android:textColor="#ff0000"
+            android:textSize="30sp" />
+
+
+        <TextView
             android:id="@+id/tv_P2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,15 +45,26 @@
             android:textSize="30sp" />
 
         <TextView
+            android:id="@+id/tv_p2_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_P2"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/tv_P2"
+            android:text="O"
+            android:textColor="#0000ff"
+            android:textSize="30sp" />
+
+        <TextView
             android:id="@+id/tv_reset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/tv_P2"
             android:layout_alignParentEnd="true"
-            android:background="#e8eaf6"
+            android:background="@drawable/reset_border"
             android:padding="16dp"
             android:text="RESET"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="30sp" />
     </RelativeLayout>
 
