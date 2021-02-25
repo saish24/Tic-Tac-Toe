@@ -15,7 +15,7 @@ import static android.graphics.Color.WHITE;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final TextView[][] grid = new TextView [3][3];
     private TextView tv_p1, tv_p2;
-    private boolean P1turn = true, resetOpt = false;
+    private boolean P1turn = true, resetOpt = false, gameOver = false;
     private int roundCount = 0, player1points, player2points;
 
     @Override
@@ -51,37 +51,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(!((TextView) v).getText().toString().equals("")) return;
-        if(P1turn) {
-            ((TextView) v).setText("X");
-            ((TextView) v).setTextColor(Color.parseColor("#ff0000"));
-        } else {
-            ((TextView) v).setText("O");
-            ((TextView) v).setTextColor(Color.parseColor("#0000ff"));
+        if(!gameOver){
+            if(!((TextView) v).getText().toString().equals("")) return;
+            if(P1turn) {
+                ((TextView) v).setText("X");
+                ((TextView) v).setTextColor(Color.parseColor("#ff0000"));
+            } else {
+                ((TextView) v).setText("O");
+                ((TextView) v).setTextColor(Color.parseColor("#0000ff"));
+            }
+            ++roundCount;
+            if(P1turn){
+                tv_p2.setTextColor(GREEN);
+                tv_p1.setTextColor(WHITE);
+            } else {
+                tv_p1.setTextColor(GREEN);
+                tv_p2.setTextColor(WHITE);
+            }
+            P1turn = !P1turn;
         }
-        ++roundCount;
-        if(P1turn){
-            tv_p2.setTextColor(GREEN);
-            tv_p1.setTextColor(WHITE);
-        } else {
-            tv_p1.setTextColor(GREEN);
-            tv_p2.setTextColor(WHITE);
-        }
-        P1turn = !P1turn;
-        if(roundCount == 9) draw();
-        else if (checkforWin()) {
+        if (checkforWin()) {
             if(!P1turn) player1wins();
             else player2wins();
-        }
+        } else if(roundCount == 9) draw();
     }
 
     private void player1wins() {
+        gameOver = true;
         Toast.makeText(this,"Player 1 wins", Toast.LENGTH_SHORT).show();
         ++player1points;
         resetboard();
         updatePoints();
     }
     private void player2wins() {
+        gameOver = true;
         Toast.makeText(this,"Player 2 wins", Toast.LENGTH_SHORT).show();
         ++player2points;
         resetboard();
@@ -110,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             }
         }
-        return (elements[0][0].equals(elements[1][1]) && elements[0][0].equals(elements[2][2]) && elements[0][0].length() > 0) ||
-                (elements[0][2].equals(elements[1][1]) && elements[0][2].equals(elements[2][0]) && elements[0][2].length() > 0);
+        return (elements[0][0].equals(elements[1][1]) && elements[0][0].equals(elements[2][2]) && !elements[0][0].equals("")) ||
+                (elements[0][2].equals(elements[1][1]) && elements[0][2].equals(elements[2][0]) && !elements[0][2].equals(""));
     }
 
     private void draw() {
@@ -128,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         grid[i][j].setText("");
                     }
                 }
+                roundCount = 0;
+                gameOver = false;
             }, 600);
         } else {
             resetOpt = false;
@@ -136,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     grid[i][j].setText("");
                 }
             }
+            roundCount = 0;
+            gameOver = false;
         }
-        roundCount = 0;
     }
 }

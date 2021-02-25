@@ -75,24 +75,27 @@
 
         <TextView
             android:id="@+id/mat_00"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_01"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_02"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
@@ -106,24 +109,27 @@
 
         <TextView
             android:id="@+id/mat_10"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_11"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_12"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
@@ -137,24 +143,27 @@
 
         <TextView
             android:id="@+id/mat_20"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_21"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
 
         <TextView
             android:id="@+id/mat_22"
-            android:layout_width="137dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/border"
             android:gravity="center"
             android:textSize="65sp" />
