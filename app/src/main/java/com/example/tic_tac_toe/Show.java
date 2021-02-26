@@ -4,46 +4,53 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Random;
-
+import static android.graphics.Color.BLUE;
 import static android.graphics.Color.GREEN;
+import static android.graphics.Color.RED;
 import static android.graphics.Color.WHITE;
 
 public class Show extends AppCompatActivity implements View.OnClickListener {
     private final TextView[][] grid = new TextView [3][3];
-    private TextView tv_p1, tv_p2;
-    private boolean P1turn = true, resetOpt = false, gameOver = false, multiPlayer, once = true;
-    private int roundCount = 0, player1points, player2points;
-    private String[][] elements = new String[3][3];
+    private TextView tv_p1, tv_p2, scrUpdate1, scrUpdate2;
+    private boolean humanTurn = true, resetOpt = false, gameOver = false, multiPlayer, once = true;
+    private int roundCount = 0, player1points, player2points, pcx, pcy;
+    private String aiChar = "O", humanChar = "X";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        multiPlayer = getIntent().getBooleanExtra("multiplayer", false);
-//        Log.v("TIC TAC TOE", "multiplayer = " + multiplayer);
+        multiPlayer = getIntent().getBooleanExtra("multiPlayer", false);
 
         tv_p1 = findViewById(R.id.tv_P1);
         tv_p2 = findViewById(R.id.tv_P2);
+        scrUpdate1 = findViewById(R.id.tv_p1_score);
+        scrUpdate2 = findViewById(R.id.tv_p2_score);
 
         if(!multiPlayer) {
 //            PLAYING WITH COMPUTER!!
-            tv_p2.setText("Computer : " + player2points);
+            String s1 = "Computer : " + player2points;
+            tv_p2.setText(s1);
         } else {
-            tv_p2.setText("Player 2 : " + player2points);
+            String s2 = "Player 2 : " + player2points;
+            tv_p2.setText(s2);
         }
+
+        scrUpdate1.setText(humanChar);
+        scrUpdate2.setText(aiChar);
 
         for(int i=0; i<3; ++i){
             for(int j=0; j<3; ++j){
-                String buttonid = "mat_" + i + j;
-                int resID = getResources().getIdentifier(buttonid, "id", getPackageName());
-                grid[i][j] = findViewById(resID);
+                String buttonId = "mat_" + i + j;
+                grid[i][j] = findViewById(getResources().getIdentifier(buttonId, "id", getPackageName()));
                 grid[i][j].setOnClickListener(this);
             }
         }
@@ -52,70 +59,88 @@ public class Show extends AppCompatActivity implements View.OnClickListener {
         TextView tv_reset = findViewById(R.id.tv_reset);
         tv_reset.setOnClickListener(v -> {
             resetOpt = true;
-            resetboard();
+            resetBoard();
+            humanChar = "X";
+            aiChar = "O";
             player1points = 0;
             player2points = 0;
+            humanTurn = true;
             updatePoints();
-            P1turn = true;
             tv_p1.setTextColor(GREEN);
             tv_p2.setTextColor(WHITE);
+            scrUpdate1.setText(humanChar);
+            scrUpdate1.setTextColor(RED);
+            scrUpdate2.setText(aiChar);
+            scrUpdate2.setTextColor(BLUE);
         });
 
     }
 
     @Override
     public void onClick(View v) {
+        if(!((TextView) v).getText().toString().equals("")) return;
         if(!gameOver){
-            if(!((TextView) v).getText().toString().equals("")) return;
             ++roundCount;
 
-            if(P1turn) {
-                ((TextView) v).setText("X");
-                ((TextView) v).setTextColor(Color.parseColor("#ff0000"));
+            if(humanTurn) {
+                ((TextView) v).setText(humanChar);
+                ((TextView) v).setTextColor(RED);
                 tv_p1.setTextColor(WHITE);
                 tv_p2.setTextColor(GREEN);
             } else {
-                ((TextView) v).setText("O");
-                ((TextView) v).setTextColor(Color.parseColor("#0000ff"));
+                ((TextView) v).setText(aiChar);
+                ((TextView) v).setTextColor(Color.BLUE);
                 tv_p1.setTextColor(GREEN);
                 tv_p2.setTextColor(WHITE);
             }
 
 
-            if (checkforWin()) {
-                if(P1turn) player1wins();
+            if (checkForWin()) {
+                if(humanTurn) player1wins();
                 else player2wins();
+                humanTurn = true;
+                tv_p1.setTextColor(GREEN);
+                tv_p2.setTextColor(WHITE);
             } else if(roundCount == 9) {
                 draw();
             } else {
-                P1turn = !P1turn;
+                humanTurn = !humanTurn;
                 if(!multiPlayer && once) playBestMove();
             }
         }
     }
 
     private void player1wins() {
+        ++player1points;
         gameOver = true;
         Toast.makeText(this,"Player 1 wins", Toast.LENGTH_SHORT).show();
-        ++player1points;
-        resetboard();
-        updatePoints();
-        P1turn = false;
-        tv_p1.setTextColor(WHITE);
-        tv_p2.setTextColor(GREEN);
 
+        resetBoard();
+        updatePoints();
+
+        String temp = humanChar;
+        humanChar = aiChar;
+        aiChar = temp;
+
+        scrUpdate1.setText(humanChar);
+        scrUpdate2.setText(aiChar);
     }
 
     private void player2wins() {
         gameOver = true;
-        if(multiPlayer) Toast.makeText(this,"Player 2 wins", Toast.LENGTH_SHORT).show();
-        else Toast.makeText(this,"Computer wins", Toast.LENGTH_SHORT).show();
+        String s = multiPlayer ? "Player 2 wins" : "Computer wins";
+        Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
+
         ++player2points;
-        resetboard();
+        resetBoard();
         updatePoints();
-        P1turn = true;
-        tv_p1.setTextColor(GREEN);
-        tv_p2.setTextColor(WHITE);
+
+        String temp = humanChar;
+        humanChar = aiChar;
+        aiChar = temp;
+
+        scrUpdate1.setText(humanChar);
+        scrUpdate2.setText(aiChar);
     }
 
     private void updatePoints() {
@@ -127,48 +152,45 @@ public class Show extends AppCompatActivity implements View.OnClickListener {
 
     private void draw() {
         Toast.makeText(this,"DRAW", Toast.LENGTH_SHORT).show();
-        resetboard();
+        resetBoard();
+        humanTurn = true;
+        tv_p1.setTextColor(GREEN);
+        tv_p2.setTextColor(WHITE);
     }
 
-    private void resetboard() {
-        if(!resetOpt){
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(() -> {
-                for(int i=0; i<3; ++i){
-                    for(int j=0; j<3; ++j){
-                        grid[i][j].setText("");
-                    }
-                }
-                roundCount = 0;
-                gameOver = false;
-            }, 600);
-        } else {
-            resetOpt = false;
-            for(int i=0; i<3; ++i){
-                for(int j=0; j<3; ++j){
-                    grid[i][j].setText("");
-                }
-            }
-            roundCount = 0;
-            gameOver = false;
-        }
-    }
-
-    private boolean checkforWin(){
+    private void clearBoard(){
+        resetOpt = false;
+        roundCount = 0;
+        gameOver = false;
         for(int i=0; i<3; ++i){
             for(int j=0; j<3; ++j){
-                elements[i][j] = grid[i][j].getText().toString();
+                grid[i][j].setText("");
             }
         }
+    }
 
-        for(int i=0; i<3; ++i){
-            if((elements[i][0].equals(elements[i][1]) && elements[i][0].equals(elements[i][2]) && elements[i][0].length() > 0)||
-                    (elements[0][i].equals(elements[1][i]) && elements[0][i].equals(elements[2][i]) && elements[0][i].length() > 0)){
-                return true;
-            }
-        }
-        return (elements[0][0].equals(elements[1][1]) && elements[0][0].equals(elements[2][2]) && !elements[0][0].equals("")) ||
-                (elements[0][2].equals(elements[1][1]) && elements[0][2].equals(elements[2][0]) && !elements[0][2].equals(""));
+    private void resetBoard() {
+        if(!resetOpt || (!multiPlayer && !humanTurn)){
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(this::clearBoard, 300);
+        } else clearBoard();
+    }
+
+    private boolean checkForWin(){
+        String[][] elements = new String[3][3];
+        for(int i=0; i<3; ++i)
+        for(int j=0; j<3; ++j)
+        elements[i][j] = grid[i][j].getText().toString();
+
+        for(int i=0; i<3; ++i)
+            if(elements[i][0].equals(elements[i][1]) && elements[i][0].equals(elements[i][2]) && !elements[i][0].equals("")) return true;
+
+        for(int i=0; i<3; ++i)
+            if(elements[0][i].equals(elements[1][i]) && elements[0][i].equals(elements[2][i]) && !elements[0][i].equals("")) return true;
+
+        if (elements[0][0].equals(elements[1][1]) && elements[0][0].equals(elements[2][2]) && !elements[0][0].equals("")) return  true;
+
+        return elements[0][2].equals(elements[1][1]) && elements[0][2].equals(elements[2][0]) && !elements[0][2].equals("");
     }
 
     void play(int i, int j) {
@@ -178,55 +200,115 @@ public class Show extends AppCompatActivity implements View.OnClickListener {
         once = true;
     }
 
-    void playBestMove() {
-        if(roundCount == 0 || (roundCount == 1 && grid[1][1].getText().toString().equals("X"))){
-            Random rand = new Random();
-            int i = rand.nextInt(5);
-            if(i == 1) play(0,0);
-            else if(i == 2) play(2,0);
-            else if(i == 3) play(0, 2);
-            else play(2,2);
-            return;
-        }
-        if(roundCount == 1){
-            play(1,1);
-            return;
-        }
+    Pair<Integer, Integer> minimax(int x, int y, boolean isMaximizing, int depth){
+        if(checkForWin()) {
+            return new Pair<>(isMaximizing ? -1 : 1, depth-1);
+        } else if(roundCount == 9) {
+            return new Pair<>(0, depth-1);
+        } else if(isMaximizing){
+            int maxVal = -10, minDepth = Integer.MAX_VALUE;
+            grid[x][y].setText(aiChar);
+            ++roundCount;
 
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (elements[i][j].equals("")) {
-                    grid[i][j].setText("O");
-                    if (checkforWin()) {
-                        play(i,j);
-                        return;
-                    }
-                    grid[i][j].setText("");
-                }
-            }
-        }
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (elements[i][j].equals("")) {
-                    grid[i][j].setText("X");
-                    if (checkforWin()) {
-                        play(i,j);
-                        return;
-                    }
-                    grid[i][j].setText("");
-                }
-            }
-        }
+            for(int i=0; i<3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    if (grid[i][j].getText().toString().equals("")) {
+                        Pair<Integer, Integer> currscore = minimax(i, j, false, depth+1);
 
-//      TODO: complete playBestMove function and find the most advantageous click...
-        for(int i=0; i<3; ++i){
-            for(int j=0; j<3; ++j){
-                if(elements[i][j].equals("")){
-                    play(i,j);
-                    return;
+                          if(maxVal < currscore.first) {
+                            maxVal = currscore.first;
+                            minDepth = currscore.second;
+                        }
+                        if(maxVal == currscore.first && minDepth > currscore.second) minDepth = currscore.second;
+
+                    }
                 }
             }
+
+            --roundCount;
+            grid[x][y].setText("");
+            return new Pair<>(maxVal, minDepth);
+        } else {
+            int minVal = 10, minDepth = Integer.MAX_VALUE;
+            grid[x][y].setText(humanChar);
+            ++roundCount;
+
+            for(int i=0; i<3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    if (grid[i][j].getText().toString().equals("")) {
+                        Pair<Integer, Integer> currscore = minimax(i, j, true, depth+1);
+
+                        if(minVal > currscore.first) {
+                            minVal = currscore.first;
+                            minDepth = currscore.second;
+                        }
+
+                        if(minVal == currscore.first && minDepth > currscore.second) minDepth = currscore.second;
+
+                    }
+                }
+            }
+
+            grid[x][y].setText("");
+            --roundCount;
+            return new Pair<>(minVal, minDepth);
         }
     }
 
+    boolean searchGrid(String c){
+        boolean winner = false;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                if (grid[i][j].getText().toString().equals("")) {
+                    grid[i][j].setText(c);
+                    if (checkForWin()) {
+                        pcx = i;
+                        pcy = j;
+                        winner = true;
+                    }
+                    grid[i][j].setText("");
+                }
+            }
+        }
+        return winner;
+    }
+
+    void playBestMove() {
+//       1st move is Corner move
+        if(roundCount == 0) play(0,0);
+
+//        else if(roundCount == 1 && grid[1][1].getText().toString().equals("")) play(1, 1);
+
+//      We first check for a win
+        else if(searchGrid(aiChar)) play(pcx, pcy);
+
+//      We ensure opponent does not have a single move win
+        else if(searchGrid(humanChar)) play(pcx, pcy);
+
+//      apply backtracking algorithm - minimax
+        else if(roundCount < 9) {
+            int maxScore = -1, posx = -1, posy = -1, depthval = Integer.MAX_VALUE;
+            for(int i=0; i<3; ++i){
+                for(int j=0; j<3; ++j){
+                    if(grid[i][j].getText().toString().equals("")){
+
+                        Pair<Integer, Integer> currScore = minimax(i, j, true, 0);
+                        if(maxScore < currScore.first){
+                            posx = i;
+                            posy = j;
+                            maxScore = currScore.first;
+                            depthval = currScore.second;
+                        }
+                        if(maxScore == currScore.first && depthval > currScore.second){
+                            posx = i;
+                            posy = j;
+                            depthval = currScore.second;
+                        }
+
+                    }
+                }
+            }
+            play(posx, posy);
+        }
+    }
 }

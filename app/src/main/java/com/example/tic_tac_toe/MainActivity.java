@@ -18,13 +18,13 @@ public class MainActivity extends AppCompatActivity {
         tv_1.setOnClickListener(v -> {
 //            PLAYING WITH COMPUTER!!
             Intent intent = new Intent(this, Show.class);
-            intent.putExtra("multiplayer", false);
+            intent.putExtra("multiPlayer", false);
             startActivity(intent);
         });
         tv_2.setOnClickListener(v -> {
 //            PLAYING WITH HUMAN!!
             Intent intent = new Intent(this, Show.class);
-            intent.putExtra("multiplayer", true);
+            intent.putExtra("multiPlayer", true);
             startActivity(intent);
         });
     }
